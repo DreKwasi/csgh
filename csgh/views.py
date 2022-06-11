@@ -1,20 +1,59 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import *
 import pandas as pd
+from datetime import datetime as dt
+
+model_dict = {
+    'supply_data':SupplyData,
+    'retail_price_list':RetailPrice,
+    'wholesale_price_list':WHPrice,
+}
 
 
-def create_objs(request, pk, df):
-    if pk == "supply_data":
+def create_objs(request, model, df):
+    if model == "supply_data":
+        supply = df
+        date_of_supply = supply.iloc[0,-1]
+        valid_to_date = f"{int(date_of_supply[0:2]) + 2}{date_of_supply[2:]}"
 
-        # objs = [
-        #     SupplyData(
-        #         deliveryID = request.user,
-        #         product_id = row[1]['product_id'],
-        #         product = row[1]['product'],
-        #         qty = row[1]['qty']
-        #     ) for row in df.iterrows()
-        # ]
-        return {'objs':objs,'stock':Stock}
+
+        supply.drop(columns=supply.columns.tolist()[-1], inplace=True)
+
+        supply.fillna(method='ffill', inplace=True)
+
+        supply = supply[supply['Ship-to Location'] != 'Not assigned']
+
+        dn_id = {}
+        check = []
+        for i in supply['Delivery ID']:
+            if i not in check:
+                fa = supply['Ship-to Location'][supply['Delivery ID'] == i]
+            dn_id[i] = fa.tolist()[0]
+            check.append(i)
+
+        # supply.drop(columns='Ship-to Location', inplace=True)
+
+        supply.rename(columns={'Delivery ID':'DN ID', 
+        'Product': 'Drug ID', 'Unnamed: 3':'Drug Name',
+        'Delivered Quantity':'Quantity'}, inplace=True)
+
+
+        supply['Quantity'] = [int(x[:-5]) for x in supply['Quantity']]
+        # import pdb
+        # pdb.set_trace()
+        objs = [
+            SupplyData(
+                deliveryId = row[1]['DN ID'],
+                shipToName = row[1]['Ship-to Location'],
+                product_id = row[1]['Drug ID'],
+                product = row[1]['Drug Name'],
+                qty = row[1]['Quantity'],
+                valid_to_date = dt.strptime(valid_to_date, "%d.%m.%Y"),
+                created_date = dt.strptime(date_of_supply, "%d.%m.%Y")
+
+            ) for row in supply.iterrows()
+        ]
+        return {'objs':objs,'supply_data':SupplyData}
     
     return None
 
@@ -31,11 +70,17 @@ def salesquote(request):
 
 def uploadfile(request, pk):
     context = {'pk':pk}
-    if request.METHOD == 'post':
-        file = request.FILES['file']
+    if request.method == 'POST':
+        file = request.FILES['upload_file']
         if pk == "supply_data":
             df = pd.read_csv(file, encoding='utf-8', dtype={'Delivery ID': str})
         else:
             df = pd.read_csv(file)
+        
+        dicts = create_objs(model=pk, df=df, request=request)
+        model_dict[pk].objects.all().delete()
+        model_dict[pk].objects.bulk_create(dicts['objs'])
+        return redirect('salesquote')
+
 
     return render(request, 'csgh/upload.html', context)

@@ -31,8 +31,10 @@ class DocumentLogs(models.Model):
 class SupplyData(models.Model):
     deliveryId = models.CharField(max_length=20)
     shipToName = models.CharField(max_length=100)
+    product_id = models.CharField(max_length=10)
     product = models.CharField(max_length=225)
     qty = models.IntegerField()
+    valid_to_date = models.DateField('valid date')
     created_date = models.DateField('date processed')
 
     # representing the str attr of the object as the DN ID
