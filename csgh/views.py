@@ -5,8 +5,9 @@ from datetime import datetime as dt
 
 model_dict = {
     'supply_data':SupplyData,
-    'retail_price_list':RetailPrice,
-    'wholesale_price_list':WHPrice,
+    'retail_price':RetailPrice,
+    'wholesale_price':WHPrice,
+    'vfl':FacilityList,
 }
 
 
@@ -32,13 +33,13 @@ def create_objs(request, model, df):
             check.append(i)
 
         # supply.drop(columns='Ship-to Location', inplace=True)
-
+        supply = supply.copy()
         supply.rename(columns={'Delivery ID':'DN ID', 
         'Product': 'Drug ID', 'Unnamed: 3':'Drug Name',
         'Delivered Quantity':'Quantity'}, inplace=True)
 
 
-        supply['Quantity'] = [int(x[:-5]) for x in supply['Quantity']]
+        supply.loc[:,'Quantity'] = [int(x[:-5]) for x in supply['Quantity']]
         # import pdb
         # pdb.set_trace()
         objs = [
@@ -55,7 +56,38 @@ def create_objs(request, model, df):
         ]
         return {'objs':objs,'supply_data':SupplyData}
     
-    return None
+    elif model == 'retail_price':
+        objs = [
+            RetailPrice(
+                product_id = row[1]['PRODUCT ID'],
+                product = row[1]['DRUG NAME'],
+                price = row[1]['PACK PRICE']
+
+            ) for row in df.iterrows()
+        ]
+        return {'objs':objs,'retail_price':RetailPrice}
+    
+    elif model == 'wholesale_price':
+        objs = [
+            RetailPrice(
+                product_id = row[1]['PRODUCT ID'],
+                product = row[1]['DRUG NAME'],
+                price = row[1]['PACK PRICE']
+
+            ) for row in df.iterrows()
+        ]
+        return {'objs':objs,'wholesale_price':WHPrice}
+    
+    elif model == "vfl":
+        objs = [
+            FacilityList(
+                facility_name = row[1]['NAME'],
+                bu = row[1]['BU']
+
+            ) for row in df.iterrows()
+        ]
+        return {'objs':objs,'vfl':FacilityList}
+
 
 def home(request):
     return render(request, 'csgh/home.html')

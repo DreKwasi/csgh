@@ -65,7 +65,7 @@ class SalesQuoteLogs(models.Model):
 
 class RetailPrice(models.Model):
     product_id = models.CharField(max_length=10, unique=True)
-    product = models.CharField(max_length=30)
+    product = models.CharField(max_length=225)
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     # representing the str attr of the object as the DN ID
@@ -79,7 +79,7 @@ class RetailPrice(models.Model):
 
 class WHPrice(models.Model):
     product_id = models.CharField(max_length=10, unique=True)
-    product = models.CharField(max_length=30)
+    product = models.CharField(max_length=225)
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     # representing the str attr of the object as the DN ID
