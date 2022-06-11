@@ -1,0 +1,267 @@
+*{
+    box-sizing: border-box;
+}
+body{
+    padding:0px;
+    margin:0px;
+    font-family:Arial, Helvetica, sans-serif;
+    /* background-image:url(logo.png); */
+    background-position: 220%;
+    background-repeat: no-repeat;
+    
+}
+
+h2{
+    text-align: center;
+    color:rgb(255,80,0);
+    font-size:50px;
+}
+
+main{
+    
+    display:flex;
+    justify-content: center;
+    width:50%;
+    margin:auto;
+    height: 600px;
+    flex-wrap: wrap;
+    /* border:1px solid blue; */
+
+}
+
+
+.top-bar{
+    width:70%;
+    display: flex;
+    flex-wrap: wrap;
+    margin: auto;
+    height:80px;
+    justify-content: center;
+    /* border: 1px solid red; */
+    margin-bottom:20px;
+    background:rgb(241, 238, 238);
+    align-items: center;
+}
+
+.bar{
+    width:70%;
+    display: flex;
+    flex-wrap: wrap;
+    margin: auto;
+    height:80px;
+    justify-content: center;
+    /* border: 1px solid red; */
+    margin-bottom:20px;
+    background: none;
+    align-items: center;
+}
+
+
+.date-range{
+    width:60%;
+    /* border: 1px solid blue; */
+    display: flex;
+    padding:10px;
+    align-items: center;
+    justify-content: center;
+}
+
+label{
+    padding:10px;
+
+}
+
+input[type="date"]{
+    width:200px;
+    text-align: center;
+    margin-left:10px;
+    padding:15px;
+}
+
+.load-dn{
+    width:100px;
+    color:white;
+    font-weight: bold;
+    background:rgba(19, 51, 231,.8);
+    margin-left:10px;
+    border-radius:10px;
+    padding:10px;
+    height:50px;
+    text-align: center;
+    border:none;
+}
+
+
+.load-dn:hover{
+    cursor: pointer;
+    background:rgb(19, 51, 231);
+
+}
+
+.upload-data{
+    width:250px;
+    color:rgb(9, 1, 1);
+    font-display: auto;
+    font-size: medium;
+    font-style: normal;
+    background:rgba(232, 178, 16, 0.518);
+    margin:auto;
+    border-radius:20px;
+    padding:10px;
+    height:35px;
+    text-align: center;
+    border:0.5 black;
+}
+
+.upload-data:hover{
+    cursor: pointer;
+    background:rgb(246, 246, 250);
+
+}
+
+/*FOR SERACH BAR  */
+.searech-box{
+    width:50%;
+}
+
+.inner-search{
+    border:1px solid grey;
+    /* padding:10px; */
+    display: flex;
+    background:white;
+    padding-left:5px;
+}
+
+input[type="text"]{
+    height:40px;
+    outline:none;
+    border:none;
+}
+
+.inner-search button{
+    padding:5px;
+    color:red;
+    width:80px;
+    font-weight: bold;
+}
+
+.inner-search button:hover{
+    cursor: pointer;
+}
+
+/* FOR DN DISPLAY */
+.dn-display{
+    width:70%;
+    display: flex;
+    margin:auto;
+    justify-content: center;
+    max-height: 400px;
+    height: 400px;
+    border: 2px solid grey;
+    flex-wrap: wrap;
+}
+
+/* for table header */
+.header-row, .dn-table, .submit-buttons{
+    width:100%;
+    padding:5px;
+}
+
+.header-row{
+    display:flex;
+    border-bottom:2px solid rgb(255,80,0);
+    justify-content: center;
+    height: 40px;
+    background:rgb(235, 230, 230);
+    align-items: center;
+}
+
+.tick{
+    width:10%;
+
+}
+
+.header-facility-name{
+    width:30%;
+    text-align:center;
+    border-left:1px solid grey;
+
+
+}
+.header-date{
+    width:20%;
+    text-align:center;
+    border-left:1px solid grey;
+}
+
+.header-warehouse{
+    width:20%;
+    text-align:center;
+    border-left:1px solid grey;
+}
+
+.header-dn-id{
+    width:20%;
+    border-left:1px solid grey;
+    padding-left:5px;
+    text-align: center;
+
+}
+.dn-table{
+    height:75%;
+    border-bottom: 1px solid grey;
+    overflow: auto;
+}
+
+.data-row{
+    display: flex;
+    border-bottom:1px solid rgb(216, 204, 204);
+    padding-bottom: 5px;
+    height: 50px;
+    align-items: center;
+}
+
+
+.checkbox{
+    width:10%;
+    align-items: center;
+    justify-content: center;
+}
+
+.f-name{
+    width:30%;
+    padding-left:5px;
+    align-items: center;
+}
+
+.dn-date{
+    width:20%
+}
+
+.ship-from{
+    width:20%;
+}
+
+.submit-buttons{
+    justify-content: center;
+    display: flex;
+}
+#download-dn{
+    width:25%;
+    padding:10px;
+    background: rgba(60, 160, 9,.8);
+    color:white;
+    font-weight: bold;
+    border-radius:8px;
+    border:none;
+}
+
+#download-dn:hover{
+    cursor: pointer;
+    background: rgb(44, 105, 9);
+}
+
+
+
+
+
