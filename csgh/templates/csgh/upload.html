@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'css/delnote.css' %}">
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.css' %}">
+    <title>Delivery Notes</title>
+</head>
+
+<body>
+    <div>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="{% url 'home' %}">  <img src="{% static 'img/logo1.png' %}" alt="mpharmalogo"></a>
+            </div>
+            <div class="nav-list">
+                <li>
+                    <a href="{% url 'home' %}">Home</a>
+                    <a href="{% url 'delnote' %}">Delivery Notes</a>
+                    <a href="#">Bloom Uploads</a>
+                </li>    
+            </div>
+        </nav>
+    </header>
+    <div class="heading"><h2>Select and Upload {{pk}}</h2></div>
+
+    <div class="bar">
+    <form method="post" enctype="multipart/form-data" action="">
+        {% csrf_token %}
+        <input type="file" name="upload_file">
+        <button type="submit">Upload</button>
+        <a href="{{request.META.HTTP_REFERER}}">Go Back</a>
+    </form>
+    </div>
+    </div>
+</body>

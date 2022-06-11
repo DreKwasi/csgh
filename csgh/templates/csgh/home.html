@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.css' %}">
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
+    <title>Order Processing</title>
+</head>
+
+<body>
+     <!-- <img src="{% static 'img/logo.png' %}" alt=""> -->
+        <header>
+            <nav>
+                <div class="logo">
+                    <a href="{% url 'home' %}">  <img src="{% static 'img/logo1.png' %}" alt="mpharmalogo"></a>
+                </div>
+                <div class="nav-list">
+                    <li>
+                        <a href="{% url 'home' %}" class="active">HOME</a>
+                        <a href="#">ABOUT</a>
+                    </li>    
+                </div>
+            </nav>
+        </header>
+
+        <main class="container">
+            <div class="comp-app">
+                <a style="text-decoration: none;" href="{% url 'delnote' %}">
+                    <div class="inner-comp">
+                        <img src="{% static 'img/cargo.png' %}" alt="">
+                        <h3>Delivery Note</h3>
+                    </div>    
+              </a>
+            </div>
+            <div class="comp-app">
+                <a style="text-decoration: none;" href="{%url 'salesquote' %}">
+                    <div class="inner-comp">
+                        <img src="{% static 'img/invoice1.png' %}" alt="">
+                        <h3>Sales Quotes</h3>
+                    </div>    
+              </a>
+            </div>    
+            <div class="comp-app">
+                <a style="text-decoration:none;" href="#">
+                    <div class="inner-comp">
+                        <img src="{% static 'img/upload.png' %}" alt="">
+                    </div>    
+                    <h3>Bloom Uploads</h3>
+              </a>
+            </div>
+            <div class="comp-app">
+                <a style="text-decoration: none;" href="#">
+                    <div class="inner-comp">
+                        <img src="{% static 'img/maintainance.png' %}" alt="">
+                    </div>   
+                    <h3>Coming soon...</h3> 
+              </a>  
+            </div>
+        </main>
+</body>
+</html>
