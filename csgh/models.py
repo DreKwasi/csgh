@@ -52,7 +52,7 @@ class SalesQuoteLogs(models.Model):
     created_date = models.DateField('date processed')
     shipFromName = models.CharField(max_length=100)
     shipToName = models.CharField(max_length=100)
-    salesquote = models.FileField()
+    salesquote = models.FileField(upload_to="documents/Sales Quotes")
 
     # representing the str attr of the object as the DN ID
     def __str__(self):

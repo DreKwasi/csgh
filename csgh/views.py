@@ -1,7 +1,12 @@
+from weakref import WeakValueDictionary
+from django.http import QueryDict
 from django.shortcuts import render, redirect
 from .models import *
 import pandas as pd
 from datetime import datetime as dt
+from .salesquote_maker import make_sales_quote
+from django.views.generic import ListView
+from django.db.models import Q
 
 model_dict = {
     'supply_data':SupplyData,
@@ -98,7 +103,36 @@ def delnote(request):
 
 
 def salesquote(request):
-    return render(request,'csgh/salesquote.html')
+    supply = pd.DataFrame.from_records(SupplyData.objects.all().values())
+    retail_price = pd.DataFrame.from_records(RetailPrice.objects.all().values())
+    wh_price = pd.DataFrame.from_records(WHPrice.objects.all().values())
+    facility = pd.DataFrame.from_records(FacilityList.objects.all().values())
+    
+    make_sales_quote(supply=supply, retail_price=retail_price, vmi_price=wh_price, vfl=facility)
+
+    return redirect('salesquote')
+
+class SalesQuoteListView(ListView):
+    template_name = "csgh/salesquote.html"
+    context_object_name = "quotes"
+    
+    def get_queryset(self):
+        q = self.request.GET.get("q") if self.request.GET.get("q") != None else ''
+        date = self.request.GET.get("date") if self.request.GET.get("date") != None else ''
+        q_filter = SalesQuoteLogs.objects.filter(Q(shipToName__icontains=q)|
+                                            Q(shipFromName__icontains=q)|
+                                            Q(deliveryId__icontains=q))
+        if date != '':
+            q_filter = DocumentLogs.objects.filter(Q(shipToName__icontains=q)|
+                                            Q(shipFromName__icontains=q)|
+                                            Q(deliveryId__icontains=q)).filter(created_date=date)
+        quotes = q_filter
+        return quotes
+
+    
+    def post(self, request, *args, **kwargs):
+        return salesquote(request)
+
 
 def uploadfile(request, pk):
     context = {'pk':pk}

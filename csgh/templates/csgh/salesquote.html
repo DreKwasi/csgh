@@ -27,6 +27,7 @@
     </header>
 
     <div class="heading"><h2>Sales Quotes</h2></div>
+
     <div class="bar">
         <button class="upload-data">
             <i class="fa fa-upload" aria-hidden="true"></i> 
@@ -44,6 +45,12 @@
             <i class="fa fa-upload" aria-hidden="true"></i> 
             <a href="{% url 'upload' 'vfl' %}">Upload Facility's List</a>
         </button>
+        <form method="POST", action="{% url 'salesquote' %}">
+            {% csrf_token %}
+            <button type="submit">
+                Generate Sales Quotes
+            </button>
+        </form>
     </div>
     <br><br>
     <div class="top-bar">
@@ -74,26 +81,27 @@
                 </div>
                 <div class="header-dn-id">DN ID</div>
             </div>
+            
             <div class="dn-table">
+                {% for quote in quotes %}
                 <div class="data-row">                    
                     <div class="checkbox">
                         <input type="checkbox" name="" id="">
                     </div>
                     <div class="f-name">
-                        Fresh Spring
+                        {{quote.shipToName}}
                     </div>
                     <div class="dn-date">
-                        22.02.2022
+                        {{quote.created_date}}
                     </div>
                     <div class="ship-from">
-                        GH1000
+                        {{quote.shipFromName}}
                     </div>
                     <div class="dn-id">
-                        GHST-2225
+                        {{quote.deliveryId}}
                     </div>
                 </div>
-                
-    
+                {% endfor %}
             </div>
      
             <div class="submit-buttons">
