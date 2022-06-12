@@ -116,6 +116,26 @@ input[type="date"]{
 .upload-data:hover{
     cursor: pointer;
     background:rgb(246, 246, 250);
+}
+
+.generate-data{
+    width:250px;
+    color:rgb(9, 9, 9);
+    font-display: auto;
+    font-size: medium;
+    font-style: normal;
+    background:rgba(139, 240, 156, 0.518);
+    margin:auto;
+    border-radius:20px;
+    padding:10px;
+    height:35px;
+    text-align: center;
+    border:0.5 rgb(219, 48, 48);
+}
+
+.generate-data:hover{
+    cursor: pointer;
+    background:rgb(248, 245, 245);
 
 }
 

@@ -31,23 +31,23 @@
     <div class="bar">
         <button class="upload-data">
             <i class="fa fa-upload" aria-hidden="true"></i> 
-            <a href="{% url 'upload' 'supply_data' %}">Upload Supply Data</a>
+            <a href="{% url 'upload' 'Supply Data' %}">Upload Supply Data</a>
         </button>
         <button class="upload-data">
             <i class="fa fa-upload" aria-hidden="true"></i> 
-            <a href="{% url 'upload' 'retail_price' %}">Upload Retail Price List</a>
+            <a href="{% url 'upload' 'Retail Price' %}">Upload Retail Price List</a>
         </button>
         <button class="upload-data">
             <i class="fa fa-upload" aria-hidden="true"></i> 
-            <a href="{% url 'upload' 'wholesale_price' %}">Upload Wholesale Price List</a>
+            <a href="{% url 'upload' 'Wholesale Price' %}">Upload Wholesale Price List</a>
         </button>
         <button class="upload-data">
             <i class="fa fa-upload" aria-hidden="true"></i> 
-            <a href="{% url 'upload' 'vfl' %}">Upload Facility's List</a>
+            <a href="{% url 'upload' 'VFL' %}">Upload Facility's List</a>
         </button>
         <form method="POST", action="{% url 'salesquote' %}">
             {% csrf_token %}
-            <button type="submit">
+            <button class="generate-data" type="submit">
                 Generate Sales Quotes
             </button>
         </form>
@@ -63,30 +63,33 @@
 
         <div class="search-box">
             <div class="inner-search">
-                <span><i class="fa fa-search fa-lg " ></i> <input type="text"></span>
+                <form method="get">
+                <span><i class="fa fa-search fa-lg " ></i> <input name="q" type="text"></span>
                 <button type="submit">Submit</button>
+                </form>
             </div>
         </div>
      </div> 
-       
+       <form method="post">
+           {% csrf_token %}
         <div class="dn-display">
             <div class="header-row">
                 <div class="header-tick"></div>
                 <div class="header-facility-name">Facilty Name</div>
                 <div class="header-date">
-                    Date
+                    Date Created
                 </div>
                 <div class="header-warehouse">
-                    Ship From
+                    Ship From Location
                 </div>
-                <div class="header-dn-id">DN ID</div>
+                <div class="header-dn-id">Delivery ID</div>
             </div>
             
             <div class="dn-table">
                 {% for quote in quotes %}
                 <div class="data-row">                    
                     <div class="checkbox">
-                        <input type="checkbox" name="" id="">
+                        <input type="checkbox" name="{{quote.deliveryId}}" id="">
                     </div>
                     <div class="f-name">
                         {{quote.shipToName}}
@@ -98,7 +101,7 @@
                         {{quote.shipFromName}}
                     </div>
                     <div class="dn-id">
-                        {{quote.deliveryId}}
+                        <a href="{{quote.salesquote.url}}" >{{quote.deliveryId}}</a>
                     </div>
                 </div>
                 {% endfor %}
@@ -108,6 +111,7 @@
                 <button id="download-dn" type="submit">Download</button>
             </div>
         </div>
+        </form>
         <br><br>
 </body>
 

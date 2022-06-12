@@ -31,6 +31,7 @@ class DocumentLogs(models.Model):
 class SupplyData(models.Model):
     deliveryId = models.CharField(max_length=20)
     shipToName = models.CharField(max_length=100)
+    shipFromName = models.CharField(max_length=100)
     product_id = models.CharField(max_length=10)
     product = models.CharField(max_length=225)
     qty = models.IntegerField()

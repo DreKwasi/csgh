@@ -44,7 +44,7 @@ def make_sales_quote(supply, retail_price, vmi_price, vfl):
     supply['Price'] = [x[0] for x in price_list]
     supply['Total Amount'] = [x[1] for x in price_list]
 
-
+    supply.rename(columns={'product_id':'Product ID', 'product':'Product', 'qty':'Quantity'}, inplace=True)
     all_dns = [x for x in dn_id.keys()]
     dicts = {}
     for i in all_dns:
@@ -70,6 +70,8 @@ def make_sales_quote(supply, retail_price, vmi_price, vfl):
     font = os.path.join(MEDIA_ROOT, 'calibri.ttf')
     #Loop through datasets
 
+    
+
     for  dn in dn_id.keys():
         facility = dn_id[dn]
         print(f'Sales Quote for {facility} \n with DN ID {dn} is being generated')
@@ -86,7 +88,7 @@ def make_sales_quote(supply, retail_price, vmi_price, vfl):
                 for index, row in df.iterrows():
                     row.drop('deliveryId', inplace=True)
                     row['Item'] = count
-                    row = row[['Item','product_id', 'product', 'qty', 'Price', 'Total Amount']]
+                    row = row[['Item','Product ID', 'Product', 'Quantity', 'Price', 'Total Amount']]
                     row.index
                     count += 1
                     for key,value in zip(row.index.tolist(), row.tolist()):
@@ -150,7 +152,7 @@ def make_sales_quote(supply, retail_price, vmi_price, vfl):
             object = SalesQuoteLogs.objects.create(
                     deliveryId=dn,
                     created_date = dt.strptime(date_of_supply, "%d.%B.%Y"),
-                    shipFromName = 'Accra',
+                    shipFromName = supply.loc[supply['deliveryId']==dn, 'shipFromName'].to_list()[0],
                     shipToName = facility,
                     )
 

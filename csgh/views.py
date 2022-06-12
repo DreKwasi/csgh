@@ -1,23 +1,26 @@
-from weakref import WeakValueDictionary
-from django.http import QueryDict
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from .models import *
 import pandas as pd
 from datetime import datetime as dt
 from .salesquote_maker import make_sales_quote
 from django.views.generic import ListView
 from django.db.models import Q
+import io
+import zipfile
+import os
+from django.conf import settings
 
 model_dict = {
-    'supply_data':SupplyData,
-    'retail_price':RetailPrice,
-    'wholesale_price':WHPrice,
-    'vfl':FacilityList,
+    'Supply Data':SupplyData,
+    'Retail Price':RetailPrice,
+    'Wholesale Price':WHPrice,
+    'VFL':FacilityList,
 }
 
 
+
 def create_objs(request, model, df):
-    if model == "supply_data":
+    if model == "Supply Data":
         supply = df
         date_of_supply = supply.iloc[0,-1]
         valid_to_date = f"{int(date_of_supply[0:2]) + 2}{date_of_supply[2:]}"
@@ -51,6 +54,7 @@ def create_objs(request, model, df):
             SupplyData(
                 deliveryId = row[1]['DN ID'],
                 shipToName = row[1]['Ship-to Location'],
+                shipFromName = row[1]['Ship-from Location'],
                 product_id = row[1]['Drug ID'],
                 product = row[1]['Drug Name'],
                 qty = row[1]['Quantity'],
@@ -59,9 +63,9 @@ def create_objs(request, model, df):
 
             ) for row in supply.iterrows()
         ]
-        return {'objs':objs,'supply_data':SupplyData}
+        return {'objs':objs,'Supply Data':SupplyData}
     
-    elif model == 'retail_price':
+    elif model == 'Retail Price':
         objs = [
             RetailPrice(
                 product_id = row[1]['PRODUCT ID'],
@@ -70,9 +74,9 @@ def create_objs(request, model, df):
 
             ) for row in df.iterrows()
         ]
-        return {'objs':objs,'retail_price':RetailPrice}
+        return {'objs':objs,'Retail Price':RetailPrice}
     
-    elif model == 'wholesale_price':
+    elif model == 'Wholesale Price':
         objs = [
             RetailPrice(
                 product_id = row[1]['PRODUCT ID'],
@@ -81,9 +85,9 @@ def create_objs(request, model, df):
 
             ) for row in df.iterrows()
         ]
-        return {'objs':objs,'wholesale_price':WHPrice}
+        return {'objs':objs,'Wholesale Price':WHPrice}
     
-    elif model == "vfl":
+    elif model == "VFL":
         objs = [
             FacilityList(
                 facility_name = row[1]['NAME'],
@@ -91,7 +95,7 @@ def create_objs(request, model, df):
 
             ) for row in df.iterrows()
         ]
-        return {'objs':objs,'vfl':FacilityList}
+        return {'objs':objs,'VFL':FacilityList}
 
 
 def home(request):
@@ -103,12 +107,43 @@ def delnote(request):
 
 
 def salesquote(request):
-    supply = pd.DataFrame.from_records(SupplyData.objects.all().values())
-    retail_price = pd.DataFrame.from_records(RetailPrice.objects.all().values())
-    wh_price = pd.DataFrame.from_records(WHPrice.objects.all().values())
-    facility = pd.DataFrame.from_records(FacilityList.objects.all().values())
+    items = request.POST.items()
+    # import pdb
+    # pdb.set_trace()
+    if len(request.POST.keys()) == 1:
+        supply = pd.DataFrame.from_records(SupplyData.objects.all().values())
+        retail_price = pd.DataFrame.from_records(RetailPrice.objects.all().values())
+        wh_price = pd.DataFrame.from_records(WHPrice.objects.all().values())
+        facility = pd.DataFrame.from_records(FacilityList.objects.all().values())
     
-    make_sales_quote(supply=supply, retail_price=retail_price, vmi_price=wh_price, vfl=facility)
+        make_sales_quote(supply=supply, retail_price=retail_price, vmi_price=wh_price, vfl=facility)
+    
+    else:
+        ids = []
+        for key, value in request.POST.items():
+            if value == "on":
+                ids.append(key)
+        
+        zip_subdir = "Sales Quotes"
+        zip_filename = zip_subdir + ".zip"
+        byte_stream = io.BytesIO()
+
+        zf = zipfile.ZipFile(byte_stream, "w")
+
+
+        for i in ids:
+            obj = SalesQuoteLogs.objects.get(deliveryId__iexact=i)
+            filename = os.path.join(settings.MEDIA_ROOT, obj.salesquote.name)
+            fdir, fname = os.path.split(filename)
+            zip_path = os.path.join(zip_subdir, fname)
+            zf.write(filename, zip_path, compresslevel=9)    
+
+            # close the zip folder and return
+        zf.close()
+        response = HttpResponse(byte_stream.getvalue(), content_type = "application/x-zip-compressed")
+        response['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+        return response  
+
 
     return redirect('salesquote')
 
@@ -144,7 +179,9 @@ def uploadfile(request, pk):
             df = pd.read_csv(file)
         
         dicts = create_objs(model=pk, df=df, request=request)
-        model_dict[pk].objects.all().delete()
+        if not model_dict[pk].objects:
+            model_dict[pk].objects.all().delete()
+            
         model_dict[pk].objects.bulk_create(dicts['objs'])
         return redirect('salesquote')
 
